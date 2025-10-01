@@ -53,6 +53,7 @@ data/fif/*.fif
 data/plots/*.png
 data/plots/*.json
 !data/.gitkeep
+!data/*/.gitkeep
 
 # Logs
 *.log
@@ -79,3 +80,27 @@ dmypy.json
 
 # Pyre
 .pyre/
+
+# Ruff
+.ruff_cache/
+
+# macOS specific
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Python-related
+.python-version
+*.pyc
+__pycache__/
+
+# Pre-commit
+.pre-commit-config.yaml.backup
