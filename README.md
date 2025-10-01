@@ -1,5 +1,7 @@
-# Emotiv LSL
+# Emotiv LSL (Project MindGames)
 
+[![CI/CD Pipeline](https://github.com/yawningbrain/project_mindgames/actions/workflows/ci.yml/badge.svg)](https://github.com/yawningbrain/project_mindgames/actions/workflows/ci.yml)
+[![Streamlit App](https://github.com/yawningbrain/project_mindgames/actions/workflows/streamlit-deploy.yml/badge.svg)](https://github.com/yawningbrain/project_mindgames/actions/workflows/streamlit-deploy.yml)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -90,8 +92,8 @@ python examples/analyze_json.py --latest
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/emotiv-lsl.git
-cd emotiv-lsl
+git clone https://github.com/yawningbrain/project_mindgames.git
+cd project_mindgames
 
 # Run automated setup
 chmod +x scripts/setup_env.sh
@@ -121,8 +123,8 @@ pip install -e ".[dev]"
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/emotiv-lsl.git
-cd emotiv-lsl
+git clone https://github.com/yawningbrain/project_mindgames.git
+cd project_mindgames
 
 # Install pipenv if you don't have it
 pip install pipenv
@@ -138,8 +140,8 @@ pipenv install --dev
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/emotiv-lsl.git
-cd emotiv-lsl
+git clone https://github.com/yawningbrain/project_mindgames.git
+cd project_mindgames
 
 # Install core dependencies
 pip install -r requirements.txt
@@ -839,8 +841,8 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/emotiv-lsl.git
-cd emotiv-lsl
+git clone https://github.com/yawningbrain/project_mindgames.git
+cd project_mindgames
 
 # Install in development mode with all dependencies
 pip install -e ".[dev]"

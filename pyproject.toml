@@ -56,10 +56,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/emotiv-lsl"
-Documentation = "https://github.com/yourusername/emotiv-lsl#readme"
-Repository = "https://github.com/yourusername/emotiv-lsl"
-Issues = "https://github.com/yourusername/emotiv-lsl/issues"
+Homepage = "https://github.com/yawningbrain/project_mindgames"
+Documentation = "https://github.com/yawningbrain/project_mindgames#readme"
+Repository = "https://github.com/yawningbrain/project_mindgames"
+Issues = "https://github.com/yawningbrain/project_mindgames/issues"
 
 [project.scripts]
 emotiv-lsl = "main:main"
