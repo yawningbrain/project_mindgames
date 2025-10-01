@@ -75,9 +75,8 @@ def start_server():
             ['sudo', '-n', str(VENV_PYTHON), 'main.py'],
             cwd=str(PROJECT_ROOT),
             env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
         )
         
         # Wait a moment to check if it started
@@ -88,8 +87,7 @@ def start_server():
             st.session_state.server_running = True
             return True, "Server started successfully!"
         else:
-            _, stderr = process.communicate()
-            return False, f"Server failed to start: {stderr}"
+            return False, "Server failed to start. Check if device is connected."
             
     except Exception as e:
         return False, f"Error starting server: {str(e)}"
@@ -245,7 +243,7 @@ with st.sidebar:
     col1, col2 = st.columns(2)
     
     with col1:
-        if st.button("▶️ Start", disabled=st.session_state.server_running, use_container_width=True):
+        if st.button("▶️ Start", disabled=st.session_state.server_running, width="stretch"):
             with st.spinner("Starting server..."):
                 success, message = start_server()
                 if success:
@@ -256,7 +254,7 @@ with st.sidebar:
                     st.error(message)
     
     with col2:
-        if st.button("⏹️ Stop", disabled=not st.session_state.server_running, use_container_width=True):
+        if st.button("⏹️ Stop", disabled=not st.session_state.server_running, width="stretch"):
             with st.spinner("Stopping server..."):
                 success, message = stop_server()
                 if success:
@@ -294,7 +292,7 @@ with tab1:
     else:
         st.info(f"Ready to record {duration} seconds of EEG data")
         
-        if st.button("🔴 Start Recording", use_container_width=True, type="primary", disabled=not st.session_state.server_running):
+        if st.button("🔴 Start Recording", width="stretch", type="primary", disabled=not st.session_state.server_running):
             with st.spinner(f"Recording {duration} seconds..."):
                 success, message = record_data(duration)
                 if success:
@@ -370,12 +368,12 @@ with tab2:
                 st.subheader("Channel Data")
                 with st.spinner("Generating plot..."):
                     fig = plot_eeg_channels(data)
-                    st.plotly_chart(fig, use_container_width=True)
+                    st.plotly_chart(fig, width="stretch")
                 
                 # Show sample data
                 with st.expander("View Sample Data"):
                     samples_df = pd.DataFrame(data['samples'][:100])  # First 100 samples
-                    st.dataframe(samples_df, use_container_width=True)
+                    st.dataframe(samples_df, width="stretch")
                 
                 # Download button
                 st.download_button(
