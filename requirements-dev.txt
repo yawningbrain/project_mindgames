@@ -1,4 +1,25 @@
-# Development dependencies for emotiv-lsl
+# Development dependencies
+-r requirements.txt
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+
+# Code quality
+black>=23.7.0
+isort>=5.12.0
+flake8>=6.1.0
+pylint>=2.17.0
+mypy>=1.5.0
+
+# Security
+safety>=2.3.0
+bandit>=1.7.0
+
+# Build tools
+build>=1.0.0
+twine>=4.0.0 for emotiv-lsl
 -r requirements.txt
 
 # Data analysis and export
