@@ -1,6 +1,8 @@
 """Emotiv EPOC X EEG headset implementation."""
 
-from typing import Dict, Any, List
+from __future__ import annotations
+
+from typing import Any
 
 import hid
 from Crypto.Cipher import AES
@@ -30,7 +32,7 @@ class EmotivEpocX(EmotivBase):
             self.logger.error(f"Failed to initialize cipher: {e}")
             raise
 
-    def get_hid_device(self) -> Dict[str, Any]:
+    def get_hid_device(self) -> dict[str, Any]:
         """
         Find and return the Emotiv EPOC X HID device.
         
@@ -140,7 +142,7 @@ class EmotivEpocX(EmotivBase):
 
         return info
 
-    def decode_data(self, data: bytes) -> List[float]:
+    def decode_data(self, data: bytes) -> list[float]:
         """
         Decode encrypted data from EPOC X device.
         

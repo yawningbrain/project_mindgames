@@ -1,7 +1,9 @@
 """Base class for Emotiv EEG devices."""
 
+from __future__ import annotations
+
 import logging
-from typing import Dict, List, Any
+from typing import Any
 
 import hid
 from pylsl import StreamInfo, StreamOutlet
@@ -23,7 +25,7 @@ class EmotivBase:
             log_file=LOG_FILE if LOG_FILE else None
         )
 
-    def get_hid_device(self) -> Dict[str, Any]:
+    def get_hid_device(self) -> dict[str, Any]:
         """
         Get the HID device information.
         
@@ -47,7 +49,7 @@ class EmotivBase:
         """
         raise NotImplementedError("Subclasses must implement get_stream_info()")
 
-    def decode_data(self, data: bytes) -> List[float]:
+    def decode_data(self, data: bytes) -> list[float]:
         """
         Decode raw data from the device.
         
