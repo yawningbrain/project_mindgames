@@ -16,6 +16,10 @@ from datetime import datetime
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure page
 st.set_page_config(
@@ -60,24 +64,55 @@ def check_server_running():
 def start_server():
     """Start the LSL server."""
     try:
+        # Get sudo password from environment
+        sudo_password = os.getenv('SUDO_PASSWORD', '')
+        
         # Stop any conflicting Emotiv services
-        subprocess.run(
-            ['sudo', 'killall', '-9', 'CortexService', 'CortexSync'],
-            capture_output=True,
-            stderr=subprocess.DEVNULL
-        )
+        if sudo_password:
+            # Use password from .env file
+            kill_cmd = subprocess.Popen(
+                ['sudo', '-S', 'killall', '-9', 'CortexService', 'CortexSync'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                text=True
+            )
+            kill_cmd.communicate(input=f"{sudo_password}\n")
+        else:
+            # Try without password (requires passwordless sudo)
+            subprocess.run(
+                ['sudo', '-n', 'killall', '-9', 'CortexService', 'CortexSync'],
+                capture_output=True,
+                stderr=subprocess.DEVNULL
+            )
         
         # Start server in background
         env = os.environ.copy()
         env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
         
-        process = subprocess.Popen(
-            ['sudo', '-n', str(VENV_PYTHON), 'main.py'],
-            cwd=str(PROJECT_ROOT),
-            env=env,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
+        if sudo_password:
+            # Use password from .env file
+            process = subprocess.Popen(
+                ['sudo', '-S', str(VENV_PYTHON), 'main.py'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                cwd=str(PROJECT_ROOT),
+                env=env,
+                text=True
+            )
+            # Send password
+            process.stdin.write(f"{sudo_password}\n")
+            process.stdin.flush()
+        else:
+            # Try without password (requires passwordless sudo)
+            process = subprocess.Popen(
+                ['sudo', '-n', str(VENV_PYTHON), 'main.py'],
+                cwd=str(PROJECT_ROOT),
+                env=env,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
         
         # Wait a moment to check if it started
         time.sleep(2)
@@ -96,11 +131,26 @@ def start_server():
 def stop_server():
     """Stop the LSL server."""
     try:
+        # Get sudo password from environment
+        sudo_password = os.getenv('SUDO_PASSWORD', '')
+        
         # Kill the process
-        subprocess.run(
-            ['sudo', '-n', 'pkill', '-f', 'python main.py'],
-            capture_output=True
-        )
+        if sudo_password:
+            # Use password from .env file
+            stop_cmd = subprocess.Popen(
+                ['sudo', '-S', 'pkill', '-f', 'python main.py'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                text=True
+            )
+            stop_cmd.communicate(input=f"{sudo_password}\n")
+        else:
+            # Try without password
+            subprocess.run(
+                ['sudo', '-n', 'pkill', '-f', 'python main.py'],
+                capture_output=True
+            )
         
         time.sleep(1)
         
