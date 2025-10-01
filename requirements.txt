@@ -1,16 +1,26 @@
-# Core dependencies for emotiv-lsl
-hidapi>=0.14.0
-pycryptodome>=3.19.0
-pylsl>=1.16.1
-numpy>=1.24.0
+# Core Dependencies for Emotiv LSL
+# These are the minimum required dependencies for basic functionality
+# Install with: pip install -r requirements.txt
 
-# Analysis tools
-mne>=1.5.0
-matplotlib>=3.7.0
-scipy>=1.10.0
+# Device communication
+hidapi>=0.14.0,<1.0.0
+pycryptodome>=3.19.0,<4.0.0
+pylsl>=1.16.1,<2.0.0
 
-# Streamlit application
-streamlit>=1.28.0
-plotly>=5.17.0
-pandas>=2.0.0
-python-dotenv>=1.0.0
+# Basic data handling
+numpy>=1.24.0,<2.0.0
+
+# Configuration
+python-dotenv>=1.0.0,<2.0.0
+
+# Optional: Analysis tools (can be installed separately)
+# Install with: pip install -e ".[analysis]"
+# mne>=1.5.0
+# matplotlib>=3.7.0
+# scipy>=1.10.0
+
+# Optional: Streamlit application (can be installed separately)
+# Install with: pip install -e ".[streamlit]"
+# streamlit>=1.28.0
+# plotly>=5.17.0
+# pandas>=2.0.0
