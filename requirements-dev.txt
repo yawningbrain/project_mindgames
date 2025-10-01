@@ -1,0 +1,19 @@
+# Development dependencies for emotiv-lsl
+-r requirements.txt
+
+# Data analysis and export
+mne>=1.5.1
+numpy>=1.26.0
+scipy>=1.11.3
+matplotlib>=3.8.0
+
+# Network packet capture (optional, only needed for PyShark mode)
+pyshark>=0.6
+
+# Testing and code quality
+pytest>=7.4.0
+pytest-cov>=4.1.0
+black>=23.9.0
+flake8>=6.1.0
+mypy>=1.5.0
+

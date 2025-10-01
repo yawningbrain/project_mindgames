@@ -1,0 +1,5 @@
+# Core dependencies for emotiv-lsl
+hidapi>=0.14.0
+pycryptodome>=3.19.0
+pylsl>=1.16.1
+
