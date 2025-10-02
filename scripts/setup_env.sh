@@ -4,13 +4,14 @@
 set -e
 
 echo "=========================================="
-echo "Emotiv LSL - Quick Setup"
+echo "Emotiv LSL - Setup"
 echo "=========================================="
 echo ""
 
 # Check Python
 if ! command -v python3 &> /dev/null; then
-    echo "❌ Python 3 not found. Install from https://www.python.org/"
+    echo "❌ Python 3 not found!"
+    echo "Install from: https://www.python.org/"
     exit 1
 fi
 
@@ -29,6 +30,7 @@ source venv/bin/activate
 # Install
 echo "Installing dependencies..."
 pip install --upgrade pip -q
+pip install -r requirements.txt -q
 pip install -e . -q
 
 # Create .env if needed

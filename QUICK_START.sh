@@ -9,23 +9,38 @@ echo "║     Emotiv LSL - One-Command Setup      ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
-# 1. Setup
+# 1. Check Python
+if ! command -v python3 &> /dev/null; then
+    echo "❌ Python 3 not found!"
+    echo "Install from: https://www.python.org/"
+    exit 1
+fi
+
+# 2. Setup venv
 if [ ! -d "venv" ]; then
-    echo "📦 Setting up..."
+    echo "📦 Creating virtual environment..."
     python3 -m venv venv
     source venv/bin/activate
+    
+    echo "📦 Installing dependencies..."
     pip install --upgrade pip -q
+    pip install -r requirements.txt -q
     pip install -e . -q
+    
     echo "✓ Setup complete"
 else
     echo "✓ Already set up"
     source venv/bin/activate
 fi
 
-# 2. Create .env
+# 3. Create .env
 if [ ! -f ".env" ] && [ -f "env.example" ]; then
     cp env.example .env
+    echo "✓ Created .env file"
 fi
+
+# 4. Verify installation
+python -c "import emotiv_lsl, pylsl, hidapi" 2>/dev/null && echo "✓ All dependencies installed"
 
 echo ""
 echo "╔══════════════════════════════════════════╗"
@@ -42,4 +57,3 @@ echo "║     source venv/bin/activate             ║"
 echo "║     python examples/export_to_json.py    ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
-
