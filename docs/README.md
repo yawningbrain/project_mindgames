@@ -1,46 +1,24 @@
-# Documentation Directory
+# Additional Documentation
 
-This directory contains supplementary documentation for the Emotiv LSL project.
+This directory contains detailed technical documentation.
 
-## 📚 Available Documentation
+## Available Documents
 
-### Main Documentation (in root directory)
-- **README.md** - Complete project documentation and reference
-- **GETTING_STARTED.md** - Step-by-step beginner's guide
-- **QUICKSTART.md** - 5-minute quick reference
-- **CONTRIBUTING.md** - Contribution guidelines
-- **CHANGELOG.md** - Version history
-- **REQUIREMENTS.md** - Dependencies and system requirements
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete system architecture and design
+- **[REQUIREMENTS.md](REQUIREMENTS.md)** - Detailed system requirements and dependencies
+- **[GETTING_STARTED.md](GETTING_STARTED.md)** - Step-by-step beginner's guide
+- **[QUICKSTART.md](QUICKSTART.md)** - 5-minute reference guide
+- **[PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md)** - Visual project structure
+- **[STREAMLIT_APP.md](STREAMLIT_APP.md)** - Streamlit application guide
 
-### Supplementary Documentation (this directory)
-- **PROJECT_OVERVIEW.md** - Visual project guide with complete structure
-- **STREAMLIT_APP.md** - Detailed Streamlit application documentation
+## Quick Links
 
-### Archived Documentation (archive/ subdirectory)
-Historical documents and internal notes:
-- PROJECT_COMPLETION.md
-- FINAL_SUMMARY.md
-- IMPROVEMENTS_REPORT.md
-- PROJECT_SUMMARY.md
-- GITHUB_DEPLOYMENT_SUCCESS.md
-- GITHUB_SETUP.md
-- DEPLOYMENT_GUIDE.md
-- SECURITY_SETUP.md
+**New to the project?** Start with [GETTING_STARTED.md](GETTING_STARTED.md)
+
+**Need quick reference?** See [QUICKSTART.md](QUICKSTART.md)
+
+**Want technical details?** Read [ARCHITECTURE.md](ARCHITECTURE.md)
 
 ---
 
-## 🔍 Quick Links
-
-| Need | Document | Location |
-|------|----------|----------|
-| **First time user?** | GETTING_STARTED.md | Root |
-| **Quick reference?** | QUICKSTART.md | Root |
-| **Full documentation?** | README.md | Root |
-| **Want to contribute?** | CONTRIBUTING.md | Root |
-| **Streamlit app help?** | STREAMLIT_APP.md | docs/ |
-| **Project structure?** | PROJECT_OVERVIEW.md | docs/ |
-
----
-
-**Start here**: If you're new to the project, begin with `../GETTING_STARTED.md`
-
+[← Back to Main README](../README.md)
