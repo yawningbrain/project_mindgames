@@ -22,23 +22,23 @@ def get_env_str(key: str, default: str) -> str:
 def get_env_bool(key: str, default: bool) -> bool:
     """Get boolean value from environment variable."""
     value = os.getenv(key, str(default))
-    return value.lower() in ('true', '1', 'yes', 'on')
+    return value.lower() in ("true", "1", "yes", "on")
 
 
 # Device sampling rate (must match Emotiv app settings)
 # Common values: 128, 256
-SRATE = get_env_int('SRATE', 256)
+SRATE = get_env_int("SRATE", 256)
 
 # Logging configuration
-LOG_LEVEL = get_env_str('LOG_LEVEL', 'INFO')
-LOG_FILE = get_env_str('LOG_FILE', '')
+LOG_LEVEL = get_env_str("LOG_LEVEL", "INFO")
+LOG_FILE = get_env_str("LOG_FILE", "")
 
 # LSL Stream configuration
-STREAM_NAME = get_env_str('STREAM_NAME', 'Epoc X')
-STREAM_TYPE = get_env_str('STREAM_TYPE', 'EEG')
+STREAM_NAME = get_env_str("STREAM_NAME", "Epoc X")
+STREAM_TYPE = get_env_str("STREAM_TYPE", "EEG")
 
 # Device configuration
-DEVICE_MANUFACTURER = get_env_str('DEVICE_MANUFACTURER', 'Emotiv')
+DEVICE_MANUFACTURER = get_env_str("DEVICE_MANUFACTURER", "Emotiv")
 
 # PyShark configuration (only needed for EmotivEpocXPyShark)
-PYSHARK_INTERFACE = get_env_str('PYSHARK_INTERFACE', 'XHC20')
+PYSHARK_INTERFACE = get_env_str("PYSHARK_INTERFACE", "XHC20")

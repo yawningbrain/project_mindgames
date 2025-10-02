@@ -1,52 +1,49 @@
 """Main entry point for Emotiv LSL server."""
 
-import sys
 import argparse
+import sys
+
+from config import LOG_FILE, LOG_LEVEL
 from emotiv_lsl.emotiv_epoc_x import EmotivEpocX
 from emotiv_lsl.logger import setup_logger
-from config import LOG_LEVEL, LOG_FILE
 
 
 def main():
     """Run the Emotiv LSL server."""
     parser = argparse.ArgumentParser(
-        description='Emotiv EPOC X LSL Server',
+        description="Emotiv EPOC X LSL Server",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
+        epilog="""
 Examples:
   python main.py                    # Run with default settings
   python main.py --log-level DEBUG  # Run with debug logging
-        '''
+        """,
     )
-    
+
     parser.add_argument(
-        '--log-level',
+        "--log-level",
         type=str,
         default=LOG_LEVEL,
-        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-        help='Set logging level (default: %(default)s)'
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Set logging level (default: %(default)s)",
     )
-    
+
     parser.add_argument(
-        '--log-file',
+        "--log-file",
         type=str,
         default=LOG_FILE if LOG_FILE else None,
-        help='Path to log file (default: console only)'
+        help="Path to log file (default: console only)",
     )
-    
+
     args = parser.parse_args()
-    
+
     # Setup logger
-    logger = setup_logger(
-        name='main',
-        level=args.log_level,
-        log_file=args.log_file
-    )
-    
-    logger.info("="*60)
+    logger = setup_logger(name="main", level=args.log_level, log_file=args.log_file)
+
+    logger.info("=" * 60)
     logger.info("Emotiv EPOC X LSL Server")
-    logger.info("="*60)
-    
+    logger.info("=" * 60)
+
     try:
         emotiv_epoc_x = EmotivEpocX()
         emotiv_epoc_x.main_loop()

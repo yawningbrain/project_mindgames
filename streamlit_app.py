@@ -5,18 +5,19 @@ A modern web interface for controlling the Emotiv EPOC X LSL server
 and recording EEG data.
 """
 
-import streamlit as st
-import subprocess
-import time
 import json
 import os
 import signal
-from pathlib import Path
+import subprocess
+import time
 from datetime import datetime
+from pathlib import Path
+
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+import streamlit as st
 from dotenv import load_dotenv
+from plotly.subplots import make_subplots
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,7 +27,7 @@ st.set_page_config(
     page_title="Emotiv LSL Controller",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
 )
 
 # Paths
@@ -38,24 +39,20 @@ VENV_PYTHON = PROJECT_ROOT / "venv" / "bin" / "python"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # Initialize session state
-if 'server_process' not in st.session_state:
+if "server_process" not in st.session_state:
     st.session_state.server_process = None
-if 'server_running' not in st.session_state:
+if "server_running" not in st.session_state:
     st.session_state.server_running = False
-if 'recording' not in st.session_state:
+if "recording" not in st.session_state:
     st.session_state.recording = False
-if 'last_recording' not in st.session_state:
+if "last_recording" not in st.session_state:
     st.session_state.last_recording = None
 
 
 def check_server_running():
     """Check if the server process is running."""
     try:
-        result = subprocess.run(
-            ['pgrep', '-f', 'python main.py'],
-            capture_output=True,
-            text=True
-        )
+        result = subprocess.run(["pgrep", "-f", "python main.py"], capture_output=True, text=True)
         return result.returncode == 0
     except:
         return False
@@ -65,41 +62,41 @@ def start_server():
     """Start the LSL server."""
     try:
         # Get sudo password from environment
-        sudo_password = os.getenv('SUDO_PASSWORD', '')
-        
+        sudo_password = os.getenv("SUDO_PASSWORD", "")
+
         # Stop any conflicting Emotiv services
         if sudo_password:
             # Use password from .env file
             kill_cmd = subprocess.Popen(
-                ['sudo', '-S', 'killall', '-9', 'CortexService', 'CortexSync'],
+                ["sudo", "-S", "killall", "-9", "CortexService", "CortexSync"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                text=True
+                text=True,
             )
             kill_cmd.communicate(input=f"{sudo_password}\n")
         else:
             # Try without password (requires passwordless sudo)
             subprocess.run(
-                ['sudo', '-n', 'killall', '-9', 'CortexService', 'CortexSync'],
+                ["sudo", "-n", "killall", "-9", "CortexService", "CortexSync"],
                 capture_output=True,
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             )
-        
+
         # Start server in background
         env = os.environ.copy()
-        env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
-        
+        env["DYLD_LIBRARY_PATH"] = "/opt/homebrew/lib"
+
         if sudo_password:
             # Use password from .env file
             process = subprocess.Popen(
-                ['sudo', '-S', str(VENV_PYTHON), 'main.py'],
+                ["sudo", "-S", str(VENV_PYTHON), "main.py"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 cwd=str(PROJECT_ROOT),
                 env=env,
-                text=True
+                text=True,
             )
             # Send password
             process.stdin.write(f"{sudo_password}\n")
@@ -107,23 +104,23 @@ def start_server():
         else:
             # Try without password (requires passwordless sudo)
             process = subprocess.Popen(
-                ['sudo', '-n', str(VENV_PYTHON), 'main.py'],
+                ["sudo", "-n", str(VENV_PYTHON), "main.py"],
                 cwd=str(PROJECT_ROOT),
                 env=env,
                 stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL
+                stderr=subprocess.DEVNULL,
             )
-        
+
         # Wait a moment to check if it started
         time.sleep(2)
-        
+
         if process.poll() is None:
             st.session_state.server_process = process
             st.session_state.server_running = True
             return True, "Server started successfully!"
         else:
             return False, "Server failed to start. Check if device is connected."
-            
+
     except Exception as e:
         return False, f"Error starting server: {str(e)}"
 
@@ -132,40 +129,37 @@ def stop_server():
     """Stop the LSL server."""
     try:
         # Get sudo password from environment
-        sudo_password = os.getenv('SUDO_PASSWORD', '')
-        
+        sudo_password = os.getenv("SUDO_PASSWORD", "")
+
         # Kill the process
         if sudo_password:
             # Use password from .env file
             stop_cmd = subprocess.Popen(
-                ['sudo', '-S', 'pkill', '-f', 'python main.py'],
+                ["sudo", "-S", "pkill", "-f", "python main.py"],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                text=True
+                text=True,
             )
             stop_cmd.communicate(input=f"{sudo_password}\n")
         else:
             # Try without password
-            subprocess.run(
-                ['sudo', '-n', 'pkill', '-f', 'python main.py'],
-                capture_output=True
-            )
-        
+            subprocess.run(["sudo", "-n", "pkill", "-f", "python main.py"], capture_output=True)
+
         time.sleep(1)
-        
+
         if st.session_state.server_process:
             try:
                 st.session_state.server_process.terminate()
                 st.session_state.server_process.wait(timeout=3)
             except:
                 pass
-        
+
         st.session_state.server_process = None
         st.session_state.server_running = False
-        
+
         return True, "Server stopped successfully!"
-        
+
     except Exception as e:
         return False, f"Error stopping server: {str(e)}"
 
@@ -174,18 +168,18 @@ def record_data(duration_sec=5):
     """Record EEG data to JSON."""
     try:
         env = os.environ.copy()
-        env['DYLD_LIBRARY_PATH'] = '/opt/homebrew/lib'
-        
+        env["DYLD_LIBRARY_PATH"] = "/opt/homebrew/lib"
+
         # Modify the export script temporarily to use specified duration
         result = subprocess.run(
-            [str(VENV_PYTHON), 'examples/export_to_json.py'],
+            [str(VENV_PYTHON), "examples/export_to_json.py"],
             cwd=str(PROJECT_ROOT),
             env=env,
             capture_output=True,
             text=True,
-            timeout=duration_sec + 30
+            timeout=duration_sec + 30,
         )
-        
+
         if result.returncode == 0:
             # Find the most recent JSON file
             json_files = list(DATA_DIR.glob("eeg_data_*.json"))
@@ -197,7 +191,7 @@ def record_data(duration_sec=5):
                 return False, "Recording completed but file not found"
         else:
             return False, f"Recording failed: {result.stderr}"
-            
+
     except subprocess.TimeoutExpired:
         return False, "Recording timed out"
     except Exception as e:
@@ -207,7 +201,7 @@ def record_data(duration_sec=5):
 def load_json_data(filepath):
     """Load JSON recording data."""
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             data = json.load(f)
         return data
     except Exception as e:
@@ -217,48 +211,42 @@ def load_json_data(filepath):
 
 def plot_eeg_channels(data):
     """Create an interactive plot of EEG channels."""
-    samples = data['samples']
-    metadata = data['metadata']
-    channels = metadata['channels']
-    
+    samples = data["samples"]
+    metadata = data["metadata"]
+    channels = metadata["channels"]
+
     # Extract data
-    times = [s['time_sec'] for s in samples]
-    
+    times = [s["time_sec"] for s in samples]
+
     # Create subplots
     fig = make_subplots(
         rows=len(channels),
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.02,
-        subplot_titles=channels
+        subplot_titles=channels,
     )
-    
+
     # Add traces for each channel
     for idx, channel in enumerate(channels, 1):
         values = [s[channel] for s in samples]
-        
+
         fig.add_trace(
-            go.Scatter(
-                x=times,
-                y=values,
-                mode='lines',
-                name=channel,
-                line=dict(width=1)
-            ),
+            go.Scatter(x=times, y=values, mode="lines", name=channel, line=dict(width=1)),
             row=idx,
-            col=1
+            col=1,
         )
-    
+
     # Update layout
     fig.update_layout(
         height=200 * len(channels),
         showlegend=False,
         title_text="EEG Channel Data",
-        hovermode='x unified'
+        hovermode="x unified",
     )
-    
+
     fig.update_xaxes(title_text="Time (seconds)", row=len(channels), col=1)
-    
+
     return fig
 
 
@@ -273,25 +261,25 @@ st.markdown("Control your Emotiv EPOC X EEG headset and record data")
 # Sidebar
 with st.sidebar:
     st.header("⚙️ Settings")
-    
+
     # Check actual server status
     actual_status = check_server_running()
     if actual_status != st.session_state.server_running:
         st.session_state.server_running = actual_status
-    
+
     # Server status
     if st.session_state.server_running:
         st.success("🟢 Server Running")
     else:
         st.error("🔴 Server Stopped")
-    
+
     st.divider()
-    
+
     # Server controls
     st.subheader("Server Control")
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         if st.button("▶️ Start", disabled=st.session_state.server_running, width="stretch"):
             with st.spinner("Starting server..."):
@@ -302,7 +290,7 @@ with st.sidebar:
                     st.rerun()
                 else:
                     st.error(message)
-    
+
     with col2:
         if st.button("⏹️ Stop", disabled=not st.session_state.server_running, width="stretch"):
             with st.spinner("Stopping server..."):
@@ -313,15 +301,15 @@ with st.sidebar:
                     st.rerun()
                 else:
                     st.error(message)
-    
+
     st.divider()
-    
+
     # Recording settings
     st.subheader("Recording Settings")
     duration = st.slider("Duration (seconds)", min_value=1, max_value=60, value=5)
-    
+
     st.divider()
-    
+
     # System info
     st.subheader("📊 System Info")
     st.caption(f"Data Directory: `data/json/`")
@@ -336,13 +324,18 @@ tab1, tab2, tab3 = st.tabs(["📹 Record", "📈 View Data", "ℹ️ About"])
 # ============================================================================
 with tab1:
     st.header("Record EEG Data")
-    
+
     if not st.session_state.server_running:
         st.warning("⚠️ Server is not running. Please start the server first.")
     else:
         st.info(f"Ready to record {duration} seconds of EEG data")
-        
-        if st.button("🔴 Start Recording", width="stretch", type="primary", disabled=not st.session_state.server_running):
+
+        if st.button(
+            "🔴 Start Recording",
+            width="stretch",
+            type="primary",
+            disabled=not st.session_state.server_running,
+        ):
             with st.spinner(f"Recording {duration} seconds..."):
                 success, message = record_data(duration)
                 if success:
@@ -350,21 +343,19 @@ with tab1:
                     st.balloons()
                 else:
                     st.error(message)
-        
+
         # Show recent recordings
         st.subheader("Recent Recordings")
         json_files = sorted(
-            DATA_DIR.glob("eeg_data_*.json"),
-            key=lambda p: p.stat().st_mtime,
-            reverse=True
+            DATA_DIR.glob("eeg_data_*.json"), key=lambda p: p.stat().st_mtime, reverse=True
         )[:10]
-        
+
         if json_files:
             for filepath in json_files:
                 stat = filepath.stat()
                 size_mb = stat.st_size / (1024 * 1024)
                 mod_time = datetime.fromtimestamp(stat.st_mtime)
-                
+
                 col1, col2, col3 = st.columns([3, 1, 1])
                 with col1:
                     st.text(filepath.name)
@@ -380,57 +371,55 @@ with tab1:
 # ============================================================================
 with tab2:
     st.header("View Recorded Data")
-    
+
     # File selector
     json_files = sorted(
-        DATA_DIR.glob("eeg_data_*.json"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True
+        DATA_DIR.glob("eeg_data_*.json"), key=lambda p: p.stat().st_mtime, reverse=True
     )
-    
+
     if json_files:
         # Select file
         selected_file = st.selectbox(
             "Select Recording",
             options=json_files,
-            format_func=lambda p: f"{p.name} ({datetime.fromtimestamp(p.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S')})"
+            format_func=lambda p: f"{p.name} ({datetime.fromtimestamp(p.stat().st_mtime).strftime('%Y-%m-%d %H:%M:%S')})",
         )
-        
+
         if selected_file:
             # Load and display data
             data = load_json_data(selected_file)
-            
+
             if data:
-                metadata = data['metadata']
-                
+                metadata = data["metadata"]
+
                 # Display metadata
                 col1, col2, col3, col4 = st.columns(4)
                 with col1:
                     st.metric("Duration", f"{metadata['duration_sec']:.1f}s")
                 with col2:
-                    st.metric("Samples", metadata['num_samples'])
+                    st.metric("Samples", metadata["num_samples"])
                 with col3:
                     st.metric("Sample Rate", f"{metadata['sample_rate_hz']} Hz")
                 with col4:
-                    st.metric("Channels", metadata['channel_count'])
-                
+                    st.metric("Channels", metadata["channel_count"])
+
                 # Plot data
                 st.subheader("Channel Data")
                 with st.spinner("Generating plot..."):
                     fig = plot_eeg_channels(data)
                     st.plotly_chart(fig, width="stretch")
-                
+
                 # Show sample data
                 with st.expander("View Sample Data"):
-                    samples_df = pd.DataFrame(data['samples'][:100])  # First 100 samples
+                    samples_df = pd.DataFrame(data["samples"][:100])  # First 100 samples
                     st.dataframe(samples_df, width="stretch")
-                
+
                 # Download button
                 st.download_button(
                     label="📥 Download JSON",
                     data=json.dumps(data, indent=2),
                     file_name=selected_file.name,
-                    mime="application/json"
+                    mime="application/json",
                 )
     else:
         st.info("No recordings available. Record some data first!")
@@ -440,8 +429,9 @@ with tab2:
 # ============================================================================
 with tab3:
     st.header("About Emotiv LSL")
-    
-    st.markdown("""
+
+    st.markdown(
+        """
     ### 🧠 Emotiv EPOC X LSL Controller
     
     This application provides a user-friendly interface for:
@@ -486,10 +476,11 @@ with tab3:
     ```
     
     **⚠️ Security Warning**: Only do this on a personal machine you trust.
-    """)
-    
+    """
+    )
+
     st.divider()
-    
+
     st.caption("Made with ❤️ for the neuroscience community")
 
 # Footer
@@ -501,4 +492,3 @@ with col2:
     st.caption(f"📁 Data: {len(list(DATA_DIR.glob('*.json')))} files")
 with col3:
     st.caption(f"⏰ {datetime.now().strftime('%H:%M:%S')}")
-

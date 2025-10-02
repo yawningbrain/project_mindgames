@@ -9,32 +9,32 @@ exported from the Emotiv EPOC X.
 import json
 import sys
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 
 def load_json_data(filename: str) -> Dict[str, Any]:
     """
     Load JSON EEG data file.
-    
+
     Args:
         filename: Path to JSON file
-        
+
     Returns:
         Dictionary with metadata and samples
     """
     print(f"📂 Loading {filename}...")
-    
-    with open(filename, 'r', encoding='utf-8') as f:
+
+    with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
-    
-    print(f"✓ Loaded successfully!\n")
+
+    print("✓ Loaded successfully!\n")
     return data
 
 
 def print_metadata(data: Dict[str, Any]):
     """Print recording metadata."""
-    metadata = data['metadata']
-    
+    metadata = data["metadata"]
+
     print("=" * 60)
     print("METADATA")
     print("=" * 60)
@@ -52,13 +52,13 @@ def print_metadata(data: Dict[str, Any]):
 
 def analyze_samples(data: Dict[str, Any]):
     """Analyze and print sample statistics."""
-    samples = data['samples']
-    channels = data['metadata']['channels']
-    
+    samples = data["samples"]
+    channels = data["metadata"]["channels"]
+
     print("=" * 60)
     print("DATA ANALYSIS")
     print("=" * 60)
-    
+
     # First sample
     print("\n📍 First Sample:")
     first = samples[0]
@@ -67,7 +67,7 @@ def analyze_samples(data: Dict[str, Any]):
     for ch in channels[:3]:  # Show first 3 channels
         print(f"  {ch}: {first[ch]}")
     print("  ...")
-    
+
     # Last sample
     print("\n📍 Last Sample:")
     last = samples[-1]
@@ -76,59 +76,59 @@ def analyze_samples(data: Dict[str, Any]):
     for ch in channels[:3]:
         print(f"  {ch}: {last[ch]}")
     print("  ...")
-    
+
     # Channel statistics
     print("\n📊 Channel Statistics:")
     print(f"{'Channel':<8} {'Min':>12} {'Max':>12} {'Mean':>12} {'Std':>12}")
     print("-" * 60)
-    
+
     for ch in channels:
         values = [s[ch] for s in samples]
         ch_min = min(values)
         ch_max = max(values)
         ch_mean = sum(values) / len(values)
         ch_std = (sum((x - ch_mean) ** 2 for x in values) / len(values)) ** 0.5
-        
+
         print(f"{ch:<8} {ch_min:>12.2f} {ch_max:>12.2f} {ch_mean:>12.2f} {ch_std:>12.2f}")
-    
+
     print()
 
 
 def extract_channel_data(data: Dict[str, Any], channel_name: str) -> List[float]:
     """
     Extract all values for a specific channel.
-    
+
     Args:
         data: JSON data dictionary
         channel_name: Name of channel to extract
-        
+
     Returns:
         List of values for that channel
     """
-    samples = data['samples']
+    samples = data["samples"]
     return [s[channel_name] for s in samples]
 
 
 def extract_timestamps(data: Dict[str, Any], relative: bool = True) -> List[float]:
     """
     Extract timestamps.
-    
+
     Args:
         data: JSON data dictionary
         relative: If True, return relative times; if False, return LSL timestamps
-        
+
     Returns:
         List of timestamps
     """
-    samples = data['samples']
-    key = 'time_sec' if relative else 'lsl_timestamp'
+    samples = data["samples"]
+    key = "time_sec" if relative else "lsl_timestamp"
     return [s[key] for s in samples]
 
 
 def convert_to_numpy_array(data: Dict[str, Any]):
     """
     Convert to numpy array (if numpy is available).
-    
+
     Returns:
         2D numpy array (samples x channels)
     """
@@ -137,17 +137,17 @@ def convert_to_numpy_array(data: Dict[str, Any]):
     except ImportError:
         print("⚠️  NumPy not installed. Cannot convert to array.")
         return None
-    
-    samples = data['samples']
-    channels = data['metadata']['channels']
-    
+
+    samples = data["samples"]
+    channels = data["metadata"]["channels"]
+
     # Build 2D array
     array = np.zeros((len(samples), len(channels)))
-    
+
     for i, sample in enumerate(samples):
         for j, ch in enumerate(channels):
             array[i, j] = sample[ch]
-    
+
     return array
 
 
@@ -156,8 +156,9 @@ def example_usage():
     print("=" * 60)
     print("EXAMPLE USAGE")
     print("=" * 60)
-    
-    print("""
+
+    print(
+        """
 # Load JSON file
 import json
 with open('eeg_data.json', 'r') as f:
@@ -190,7 +191,8 @@ import numpy as np
 channels = metadata['channels']
 array = np.array([[s[ch] for ch in channels] for s in samples])
 # array shape: (num_samples, num_channels)
-""")
+"""
+    )
 
 
 def main():
@@ -202,38 +204,37 @@ def main():
         print()
         example_usage()
         return
-    
+
     filename = sys.argv[1]
-    
+
     if not Path(filename).exists():
         print(f"❌ File not found: {filename}")
         return
-    
+
     # Load data
     data = load_json_data(filename)
-    
+
     # Print metadata
     print_metadata(data)
-    
+
     # Analyze samples
     analyze_samples(data)
-    
+
     # Try numpy conversion
     print("=" * 60)
     print("NUMPY CONVERSION")
     print("=" * 60)
     array = convert_to_numpy_array(data)
     if array is not None:
-        print(f"✓ Converted to NumPy array")
+        print("✓ Converted to NumPy array")
         print(f"  Shape: {array.shape} (samples x channels)")
         print(f"  Dtype: {array.dtype}")
         print(f"  Size: {array.nbytes / 1024:.2f} KB in memory")
     print()
-    
+
     # Show usage examples
     example_usage()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
